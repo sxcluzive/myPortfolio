@@ -2,7 +2,7 @@ import {
   profiles, skills, experiences, projects, metrics, activityLogs, visitors,
   type Profile, type Skill, type Experience, type Project, type Metric, type ActivityLog, type Visitor,
   type InsertProfile, type InsertSkill, type InsertExperience, type InsertProject, type InsertMetric, type InsertActivityLog, type InsertVisitor
-} from "@shared/schema";
+} from "../shared/schema";
 
 export interface IStorage {
   // Profile methods

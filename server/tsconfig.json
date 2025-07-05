@@ -1,5 +1,9 @@
 {
     "compilerOptions": {
+      "baseUrl": ".",
+      "paths": {
+        "@shared/*": ["../shared/*"]
+      },
       "target": "ES2020",
       "module": "ES2020",
       "moduleResolution": "node",
@@ -9,6 +13,7 @@
       "strict": true,
       "skipLibCheck": true
     },
-    "include": ["./**/*.ts"]
+    "include": ["./**/*.ts", "../shared/**/*.ts"],
+    "exclude": ["../vite.config.ts", "../vite.config.frontend.ts"]
   }
   
