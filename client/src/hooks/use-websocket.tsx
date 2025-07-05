@@ -13,6 +13,12 @@ export function useWebSocket() {
   const wsRef = useRef<WebSocket | null>(null);
 
   useEffect(() => {
+    // Disable WebSocket in production since Render doesn't support WebSockets
+    if (import.meta.env.PROD) {
+      console.log('WebSocket disabled in production (Render limitation)');
+      return;
+    }
+
     const wsUrl = `${getWebSocketUrl()}/ws`;
     
     const connect = () => {

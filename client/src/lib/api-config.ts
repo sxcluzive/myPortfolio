@@ -19,13 +19,11 @@ export const createApiUrl = (endpoint: string) => {
   return `${API_BASE_URL}/api/${endpoint}`;
 };
 
-// WebSocket configuration
+// WebSocket configuration - only used in development
 export const getWebSocketUrl = () => {
+  // In production, WebSocket is disabled due to Render limitations
   if (import.meta.env.PROD) {
-    // Temporarily hardcode the URL to fix the issue
-    const apiUrl = 'https://myportfolio-z3s6.onrender.com';
-    // Convert HTTPS to WSS
-    return apiUrl.replace('https://', 'wss://').replace('http://', 'ws://');
+    return '';
   }
   
   // In development, use relative WebSocket path
