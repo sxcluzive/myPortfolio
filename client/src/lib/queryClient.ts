@@ -61,7 +61,7 @@ export const getQueryFn: <T>(options: {
       console.log('✅ API Success:', { url, data });
       return data;
     } catch (error) {
-      console.error('❌ API Error:', { url, error: error.message });
+      console.error('❌ API Error:', { url, error: error instanceof Error ? error.message : String(error) });
       throw error;
     }
   };

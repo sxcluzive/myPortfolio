@@ -19,14 +19,6 @@ export const createApiUrl = (endpoint: string) => {
   return `${API_BASE_URL}/api/${endpoint}`;
 };
 
-// WebSocket configuration - only used in development
-export const getWebSocketUrl = () => {
-  // In production, WebSocket is disabled due to Render limitations
-  if (import.meta.env.PROD) {
-    return '';
-  }
-  
-  // In development, use relative WebSocket path
-  const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-  return `${protocol}//${window.location.host}`;
+export const getApiUrl = () => {
+  return API_BASE_URL;
 }; 
