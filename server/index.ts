@@ -7,16 +7,16 @@ const app = express();
 
 // Add CORS headers for Vercel frontend
 app.use((req, res, next) => {
-  // Allow specific Vercel domain instead of wildcard
-  const allowedOrigins = [
-    'https://my-portfolio-73ox8hbbr-shubhams-projects-9683b15e.vercel.app',
-    'https://my-portfolio-znwe.vercel.app',
-    'http://localhost:3000',
-    'http://localhost:5173'
-  ];
-  
   const origin = req.headers.origin;
-  if (origin && allowedOrigins.includes(origin)) {
+  
+  // Allow all Vercel domains (including preview deployments)
+  const isVercelDomain = origin && (
+    origin.includes('vercel.app') ||
+    origin.includes('localhost') ||
+    origin.includes('127.0.0.1')
+  );
+  
+  if (isVercelDomain) {
     res.header('Access-Control-Allow-Origin', origin);
   }
   
