@@ -83,9 +83,13 @@ A modern, interactive terminal-themed portfolio showcasing backend engineering s
 
 ## Deployment
 
-### GitHub Pages Deployment
+### Recommended Stack: Vercel + Render + Neon
 
-This project is configured for easy deployment to GitHub Pages with a separate backend API.
+This project is optimized for the best free deployment stack:
+
+- **Frontend**: Vercel (React app with global CDN)
+- **Backend**: Render (Node.js API with WebSocket support)
+- **Database**: Neon (Serverless PostgreSQL)
 
 #### Quick Deploy
 
@@ -94,26 +98,25 @@ This project is configured for easy deployment to GitHub Pages with a separate b
    ./scripts/deploy.sh
    ```
 
-2. **Follow the interactive prompts** to:
-   - Build the frontend
-   - Deploy to GitHub Pages
-   - Set up backend deployment
+2. **Choose option 1** for the complete Vercel + Render + Neon stack
 
-#### Manual Deployment
+3. **Follow the step-by-step guide** to deploy all components
 
-1. **Enable GitHub Pages** in your repository settings
-2. **Set up GitHub Secrets**:
-   - `VITE_API_URL`: Your backend API URL
-3. **Push to main branch** to trigger automatic deployment
+#### Alternative Options
 
-#### Backend Deployment
+- **GitHub Pages + Render**: Traditional static hosting
+- **Railway**: All-in-one platform
+- **Vercel**: Frontend-only deployment
 
-Deploy the backend to any of these platforms:
-- **Render** (Recommended): Easy setup with PostgreSQL
-- **Railway**: Good free tier with database
-- **Vercel**: Fast deployment with serverless functions
+#### Why This Stack?
 
-For detailed deployment instructions, see [DEPLOYMENT.md](DEPLOYMENT.md).
+| Component | Platform | Free Tier | Performance | Features |
+|-----------|----------|-----------|-------------|----------|
+| **Frontend** | Vercel | ✅ Unlimited | ⭐⭐⭐⭐⭐ | Global CDN, Auto-deploy |
+| **Backend** | Render | ✅ 750h/month | ⭐⭐⭐⭐⭐ | WebSocket support, No cold starts |
+| **Database** | Neon | ✅ 3GB storage | ⭐⭐⭐⭐⭐ | Serverless, Auto-scaling |
+
+For detailed deployment instructions, see [DEPLOYMENT-VERCEL-RENDER-NEON.md](DEPLOYMENT-VERCEL-RENDER-NEON.md).
 
 ## Project Structure
 

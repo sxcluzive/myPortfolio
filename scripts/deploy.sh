@@ -132,16 +132,50 @@ deploy_github_pages() {
 setup_backend() {
     print_status "Setting up backend deployment..."
     
-    echo "Choose your backend deployment platform:"
-    echo "1) Render (Recommended)"
-    echo "2) Railway"
-    echo "3) Vercel"
-    echo "4) Manual setup"
+    echo "Choose your deployment stack:"
+    echo "1) Vercel + Render + Neon (Recommended)"
+    echo "2) Render (Backend only)"
+    echo "3) Railway"
+    echo "4) Vercel (Backend only)"
+    echo "5) Manual setup"
     
-    read -p "Enter your choice (1-4): " choice
+    read -p "Enter your choice (1-5): " choice
     
     case $choice in
         1)
+            print_status "Setting up Vercel + Render + Neon stack..."
+            echo
+            echo "🎯 This is the optimal free stack:"
+            echo "   Frontend: Vercel (React)"
+            echo "   Backend: Render (Node.js + WebSocket)"
+            echo "   Database: Neon (PostgreSQL)"
+            echo
+            echo "📋 Step-by-step setup:"
+            echo "======================="
+            echo
+            echo "1. Database (Neon):"
+            echo "   - Go to https://neon.tech"
+            echo "   - Create free account"
+            echo "   - Create new project"
+            echo "   - Copy connection string"
+            echo
+            echo "2. Backend (Render):"
+            echo "   - Go to https://render.com"
+            echo "   - Create Web Service"
+            echo "   - Root directory: server"
+            echo "   - Build: npm run build:backend"
+            echo "   - Start: npm start"
+            echo "   - Add DATABASE_URL from Neon"
+            echo
+            echo "3. Frontend (Vercel):"
+            echo "   - Go to https://vercel.com"
+            echo "   - Import GitHub repo"
+            echo "   - Build: npm run build:frontend"
+            echo "   - Add VITE_API_URL from Render"
+            echo
+            echo "📖 Detailed guide: DEPLOYMENT-VERCEL-RENDER-NEON.md"
+            ;;
+        2)
             print_status "Setting up Render deployment..."
             echo "1. Go to https://render.com and create an account"
             echo "2. Create a new Web Service"
@@ -154,7 +188,7 @@ setup_backend() {
             echo "   - PORT=10000"
             echo "   - DATABASE_URL=your_production_db_url"
             ;;
-        2)
+        3)
             print_status "Setting up Railway deployment..."
             echo "1. Go to https://railway.app and create an account"
             echo "2. Deploy from GitHub"
@@ -164,7 +198,7 @@ setup_backend() {
             echo "   - PORT=3000"
             echo "   - DATABASE_URL=your_production_db_url"
             ;;
-        3)
+        4)
             print_status "Setting up Vercel deployment..."
             echo "1. Go to https://vercel.com and create an account"
             echo "2. Import your GitHub repository"
@@ -173,15 +207,14 @@ setup_backend() {
             echo "   - NODE_ENV=production"
             echo "   - DATABASE_URL=your_production_db_url"
             ;;
-        4)
+        5)
             print_status "Manual setup instructions..."
             echo "1. Build the backend: npm run build:backend"
             echo "2. Deploy the 'server' directory to your preferred platform"
             echo "3. Set environment variables as needed"
             ;;
         *)
-            print_error "Invalid choice"
-            exit 1
+            print_error "Invalid choice. Please enter a number between 1-5."
             ;;
     esac
 }
