@@ -1,6 +1,6 @@
 import { createServer } from "http";
 import { WebSocketServer, WebSocket } from "ws";
-import { storage } from "./storage";
+import { storage } from './storage.js';
 import { v4 as uuidv4 } from 'uuid';
 // Visitor tracking middleware
 function trackVisitor(req, res, next) {

@@ -19,7 +19,8 @@
         "@shared/*": ["../shared/*"],
         "@assets/*": ["../attached_assets/*"]
       },
-      "types": ["node"]
+      "types": ["node"],
+      "moduleDetection": "force"
     },
     "include": [
       "**/*.ts"

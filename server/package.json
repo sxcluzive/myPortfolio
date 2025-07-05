@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node dist/index.js",
     "dev": "tsx index.ts",
-    "build": "tsc && cp -r ../shared dist/",
+    "build": "tsc && cp -r ../shared dist/ && node fix-imports.js",
     "check": "tsc"
   },
   "dependencies": {
