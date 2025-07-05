@@ -2,10 +2,14 @@
 const getApiBaseUrl = () => {
   // In production, use the environment variable or fallback to a default
   if (import.meta.env.PROD) {
-    return import.meta.env.VITE_API_URL || 'https://myportfolio-z3s6.onrender.com';
+    const apiUrl = import.meta.env.VITE_API_URL || 'https://myportfolio-z3s6.onrender.com';
+    console.log('Production API URL:', apiUrl);
+    console.log('Environment variable VITE_API_URL:', import.meta.env.VITE_API_URL);
+    return apiUrl;
   }
   
   // In development, use relative paths (same origin)
+  console.log('Development mode - using relative paths');
   return '';
 };
 
