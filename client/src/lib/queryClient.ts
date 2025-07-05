@@ -32,16 +32,38 @@ export const getQueryFn: <T>(options: {
   async ({ queryKey }) => {
     const endpoint = queryKey[0] as string;
     const url = endpoint.startsWith('/api/') ? createApiUrl(endpoint.replace('/api/', '')) : endpoint;
-    const res = await fetch(url, {
-      credentials: "include",
+    
+    console.log('🔍 API Call Debug:', {
+      endpoint,
+      url,
+      isProduction: import.meta.env.PROD,
+      userAgent: navigator.userAgent
     });
+    
+    try {
+      const res = await fetch(url, {
+        credentials: "include",
+      });
 
-    if (unauthorizedBehavior === "returnNull" && res.status === 401) {
-      return null;
+      console.log('📡 API Response:', {
+        url,
+        status: res.status,
+        statusText: res.statusText,
+        headers: Object.fromEntries(res.headers.entries())
+      });
+
+      if (unauthorizedBehavior === "returnNull" && res.status === 401) {
+        return null;
+      }
+
+      await throwIfResNotOk(res);
+      const data = await res.json();
+      console.log('✅ API Success:', { url, data });
+      return data;
+    } catch (error) {
+      console.error('❌ API Error:', { url, error: error.message });
+      throw error;
     }
-
-    await throwIfResNotOk(res);
-    return await res.json();
   };
 
 export const queryClient = new QueryClient({
