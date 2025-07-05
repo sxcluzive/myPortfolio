@@ -101,7 +101,7 @@ The backend package.json is already configured correctly with:
 {
   "scripts": {
     "start": "node dist/index.js",
-    "build": "esbuild index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist"
+    "build": "tsc && cp -r ../shared dist/"
   }
 }
 ```
