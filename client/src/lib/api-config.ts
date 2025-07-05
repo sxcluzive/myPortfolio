@@ -1,4 +1,4 @@
-// API Configuration for different environments
+// API Configuration for different environments - Updated for Render backend
 const getApiBaseUrl = () => {
   // In production, use the environment variable or fallback to a default
   if (import.meta.env.PROD) {
