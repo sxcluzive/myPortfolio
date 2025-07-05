@@ -18,7 +18,7 @@ export default defineConfig({
   },
   define: {
     // Replace API URL for production
-    'process.env.VITE_API_URL': JSON.stringify(process.env.VITE_API_URL || 'https://your-backend.onrender.com'),
+    'process.env.VITE_API_URL': JSON.stringify(process.env.VITE_API_URL || 'https://your-actual-backend-url.onrender.com'),
   },
   server: {
     fs: {
