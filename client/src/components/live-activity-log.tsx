@@ -17,33 +17,51 @@ export default function LiveActivityLog() {
   const [logs, setLogs] = useState<ActivityLog[]>([]);
   const { messages } = useSSE();
 
-  // Fetch activity logs
+  // Fetch activity logs (less frequent polling since we have SSE)
   const { data: logsResponse } = useQuery<{ status: number; data: ActivityLog[] }>({
     queryKey: ["/api/logs"],
-    refetchInterval: 5000, // Refresh every 5 seconds
+    refetchInterval: 30000, // Refresh every 30 seconds instead of 5
   });
 
-  useEffect(() => {
-    if (logsResponse?.data) {
-      // Keep only the last 3 entries
-      setLogs(logsResponse.data.slice(-3));
-    }
-  }, [logsResponse]);
-
-  // Process SSE messages for real-time updates
+  // Process SSE messages for real-time updates (primary source)
   useEffect(() => {
     messages.forEach((message) => {
       if (message.type === 'system_activity') {
-        // Add new system activity to logs and keep only last 3
-        setLogs(prev => [{
-          id: Date.now(),
-          timestamp: message.timestamp,
-          activity: message.message,
-          type: 'system'
-        }, ...prev.slice(0, 2)]); // Keep only last 3 logs
+        // Create a unique ID based on timestamp and message content
+        const uniqueId = `${message.timestamp}-${message.message}`;
+        
+        setLogs(prev => {
+          // Check if this message already exists (deduplication)
+          const exists = prev.some(log => 
+            log.timestamp === message.timestamp && log.activity === message.message
+          );
+          
+          if (exists) {
+            return prev; // Don't add duplicate
+          }
+          
+          // Add new message and keep only last 3
+          const newLog = {
+            id: Date.now() + Math.random(), // Ensure unique ID
+            timestamp: message.timestamp,
+            activity: message.message,
+            type: 'system' as const
+          };
+          
+          return [newLog, ...prev.slice(0, 2)]; // Keep only last 3 logs
+        });
       }
     });
   }, [messages]);
+
+  // Use API data as fallback/initial data (only if no SSE messages)
+  useEffect(() => {
+    if (logsResponse?.data && logs.length === 0) {
+      // Only use API data if we don't have any SSE messages yet
+      const lastThreeLogs = logsResponse.data.slice(-3);
+      setLogs(lastThreeLogs);
+    }
+  }, [logsResponse, logs.length]);
 
   const getActivityIcon = (type: string) => {
     switch (type) {
@@ -98,7 +116,7 @@ export default function LiveActivityLog() {
 
       {/* Activity Log - Only last 3 entries */}
       <div className="space-y-2">
-        {logs.map((log) => (
+        {logs.slice(0, 3).map((log) => (
           <div key={log.id} className="flex items-start space-x-2 p-2 hover:bg-terminal-gray rounded">
             <span className="text-xs text-muted-foreground mt-1">
               {formatTimestamp(log.timestamp)}

@@ -27,7 +27,21 @@ export function useSSE() {
         eventSourceRef.current.onmessage = (event) => {
           try {
             const message: SSEMessage = JSON.parse(event.data);
-            setMessages(prev => [message, ...prev.slice(0, 19)]); // Keep last 20 messages
+            
+            setMessages(prev => {
+              // Check for duplicates based on timestamp and message content
+              const isDuplicate = prev.some(existing => 
+                existing.timestamp === message.timestamp && 
+                existing.message === message.message
+              );
+              
+              if (isDuplicate) {
+                return prev; // Don't add duplicate
+              }
+              
+              // Add new message and keep only last 3 (matching the UI requirement)
+              return [message, ...prev.slice(0, 2)];
+            });
           } catch (error) {
             console.error('Failed to parse SSE message:', error);
           }
