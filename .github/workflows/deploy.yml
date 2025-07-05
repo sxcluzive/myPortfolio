@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [ main ]
 
+# Note: This workflow requires either:
+# 1. A Personal Access Token (GH_PAGES_TOKEN) with repo permissions, OR
+# 2. Workflow permissions enabled in repository settings (Settings → Actions → General → Workflow permissions → Read and write permissions)
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -32,5 +36,5 @@ jobs:
       uses: peaceiris/actions-gh-pages@v3
       if: github.ref == 'refs/heads/main'
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+        github_token: ${{ secrets.GH_PAGES_TOKEN }}
         publish_dir: ./dist/public 
