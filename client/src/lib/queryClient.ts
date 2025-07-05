@@ -43,6 +43,11 @@ export const getQueryFn: <T>(options: {
     try {
       const res = await fetch(url, {
         credentials: "include",
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0'
+        }
       });
 
       console.log('📡 API Response:', {
@@ -71,12 +76,36 @@ export const queryClient = new QueryClient({
     queries: {
       queryFn: getQueryFn({ on401: "throw" }),
       refetchInterval: false,
-      refetchOnWindowFocus: false,
-      staleTime: Infinity,
-      retry: false,
+      refetchOnWindowFocus: true,
+      refetchOnMount: true,
+      refetchOnReconnect: true,
+      staleTime: 5 * 60 * 1000,
+      gcTime: 10 * 60 * 1000,
+      retry: 1,
     },
     mutations: {
       retry: false,
     },
   },
 });
+
+// Function to invalidate all queries and force fresh data
+export const invalidateAllQueries = async () => {
+  console.log('🔄 Invalidating all queries...');
+  await queryClient.invalidateQueries();
+  console.log('✅ All queries invalidated');
+};
+
+// Function to refetch all active queries
+export const refetchAllQueries = async () => {
+  console.log('🔄 Refetching all active queries...');
+  await queryClient.refetchQueries();
+  console.log('✅ All queries refetched');
+};
+
+// Function to clear all cache
+export const clearAllCache = async () => {
+  console.log('🗑️ Clearing all cache...');
+  await queryClient.clear();
+  console.log('✅ All cache cleared');
+};

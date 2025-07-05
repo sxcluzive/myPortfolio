@@ -1,9 +1,30 @@
 import React from 'react';
 import { useView } from '@/contexts/view-context';
 import ThemeSwitcher from './theme-switcher';
+import { invalidateAllQueries } from '@/lib/queryClient';
+import { useToast } from '@/hooks/use-toast';
 
 export default function ControlPanel() {
   const { currentView, setCurrentView } = useView();
+  const { toast } = useToast();
+
+  const handleRefresh = async () => {
+    try {
+      await invalidateAllQueries();
+      toast({
+        title: "Cache Refreshed",
+        description: "All data has been refreshed from the server.",
+        duration: 2000,
+      });
+    } catch (error) {
+      toast({
+        title: "Refresh Failed",
+        description: "Failed to refresh data. Please try again.",
+        variant: "destructive",
+        duration: 3000,
+      });
+    }
+  };
 
   return (
     <div className="fixed top-20 right-4 z-50">
@@ -47,6 +68,19 @@ export default function ControlPanel() {
         <div className="mb-2">
           <div className="text-xs text-muted-foreground mb-1">Theme</div>
           <ThemeSwitcher />
+        </div>
+
+        {/* Refresh Button */}
+        <div className="mb-2">
+          <div className="text-xs text-muted-foreground mb-1">Data</div>
+          <button
+            onClick={handleRefresh}
+            className="w-full px-2 py-1 rounded text-xs font-medium transition-all duration-200 bg-terminal-gray text-muted-foreground hover:text-matrix hover:bg-terminal-border"
+            title="Refresh all data from server"
+          >
+            <i className="fas fa-sync-alt mr-1"></i>
+            Refresh
+          </button>
         </div>
 
         {/* Status Indicator */}

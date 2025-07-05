@@ -118,6 +118,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         activity: `GET /api/profile - 200 OK - ${Math.floor(Math.random() * 50) + 20}ms`,
         type: "api"
       });
+      // Add cache-busting headers
+      res.set({
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+        'Last-Modified': new Date().toUTCString()
+      });
       res.json({ status: 200, data: profile });
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch profile" });
@@ -131,6 +138,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       await storage.createActivityLog({
         activity: `GET /api/skills - 200 OK - ${Math.floor(Math.random() * 50) + 20}ms`,
         type: "api"
+      });
+      // Add cache-busting headers
+      res.set({
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+        'Last-Modified': new Date().toUTCString()
       });
       res.json({ status: 200, data: skills });
     } catch (error) {
@@ -146,6 +160,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         activity: `GET /api/experience - 200 OK - ${Math.floor(Math.random() * 50) + 20}ms`,
         type: "api"
       });
+      // Add cache-busting headers
+      res.set({
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+        'Last-Modified': new Date().toUTCString()
+      });
       res.json({ status: 200, data: experiences });
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch experience" });
@@ -160,6 +181,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         activity: `GET /api/projects - 200 OK - ${Math.floor(Math.random() * 50) + 20}ms`,
         type: "api"
       });
+      // Add cache-busting headers
+      res.set({
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+        'Last-Modified': new Date().toUTCString()
+      });
       res.json({ status: 200, data: projects });
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch projects" });
@@ -173,6 +201,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       await storage.createActivityLog({
         activity: `GET /api/metrics - 200 OK - ${Math.floor(Math.random() * 50) + 20}ms`,
         type: "api"
+      });
+      // Add cache-busting headers
+      res.set({
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+        'Last-Modified': new Date().toUTCString()
       });
       res.json({ status: 200, data: metrics });
     } catch (error) {

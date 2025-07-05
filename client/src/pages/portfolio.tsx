@@ -7,13 +7,47 @@ import ProjectsSection from "@/components/projects-section";
 import ApiSection from "@/components/api-section";
 import ControlPanel from "@/components/control-panel";
 import { ViewProvider, useView } from "@/contexts/view-context";
+import { invalidateAllQueries } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 
 function PortfolioContent() {
   const { currentView } = useView();
+  const { toast } = useToast();
 
   useEffect(() => {
     document.title = "Shubham Singh - Backend Engineer Terminal";
   }, []);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Ctrl+R or Cmd+R to refresh data (but prevent browser refresh)
+      if ((event.ctrlKey || event.metaKey) && event.key === 'r') {
+        event.preventDefault();
+        handleRefresh();
+      }
+    };
+
+    const handleRefresh = async () => {
+      try {
+        await invalidateAllQueries();
+        toast({
+          title: "Cache Refreshed",
+          description: "All data has been refreshed from the server. (Ctrl+R)",
+          duration: 2000,
+        });
+      } catch (error) {
+        toast({
+          title: "Refresh Failed",
+          description: "Failed to refresh data. Please try again.",
+          variant: "destructive",
+          duration: 3000,
+        });
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [toast]);
 
   return (
     <div className="bg-terminal-bg text-matrix font-mono overflow-x-hidden min-h-screen">

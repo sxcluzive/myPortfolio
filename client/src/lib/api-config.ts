@@ -2,9 +2,9 @@
 const getApiBaseUrl = () => {
   // In production, use the environment variable or fallback to a default
   if (import.meta.env.PROD) {
-    const apiUrl = import.meta.env.VITE_API_URL || 'https://myportfolio-z3s6.onrender.com';
-    console.log('Production API URL:', apiUrl);
-    console.log('Environment variable VITE_API_URL:', import.meta.env.VITE_API_URL);
+    // Temporarily hardcode the URL to fix the issue
+    const apiUrl = 'https://myportfolio-z3s6.onrender.com';
+    console.log('Production API URL (hardcoded):', apiUrl);
     return apiUrl;
   }
   
@@ -22,7 +22,8 @@ export const createApiUrl = (endpoint: string) => {
 // WebSocket configuration
 export const getWebSocketUrl = () => {
   if (import.meta.env.PROD) {
-    const apiUrl = import.meta.env.VITE_API_URL || 'https://myportfolio-z3s6.onrender.com';
+    // Temporarily hardcode the URL to fix the issue
+    const apiUrl = 'https://myportfolio-z3s6.onrender.com';
     // Convert HTTPS to WSS
     return apiUrl.replace('https://', 'wss://').replace('http://', 'ws://');
   }
