@@ -296,6 +296,21 @@ async def list_products(db: AsyncSession = Depends(get_db)):
   }
 
   async trackVisitor(visitorData: InsertVisitor): Promise<Visitor> {
+    // Check if visitor already exists
+    const existingVisitor = Array.from(this.visitors.values()).find(v => v.visitorId === visitorData.visitorId);
+    
+    if (existingVisitor) {
+      // Update existing visitor
+      existingVisitor.lastVisit = new Date();
+      existingVisitor.visitCount = (existingVisitor.visitCount || 0) + 1;
+      existingVisitor.isActive = 'true';
+      if (visitorData.pagesVisited && visitorData.pagesVisited.length > 0) {
+        existingVisitor.pagesVisited = [...(existingVisitor.pagesVisited || []), ...visitorData.pagesVisited];
+      }
+      return existingVisitor;
+    }
+    
+    // Create new visitor
     const id = this.currentId++;
     const newVisitor: Visitor = { 
       ...visitorData, 
@@ -305,7 +320,7 @@ async def list_products(db: AsyncSession = Depends(get_db)):
       lastVisit: new Date(),
       visitCount: 1,
       totalSessionTime: 0,
-      pagesVisited: [],
+      pagesVisited: visitorData.pagesVisited || [],
       country: null,
       city: null,
       ipAddress: visitorData.ipAddress || null,
