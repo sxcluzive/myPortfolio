@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useWebSocket } from "@/hooks/use-websocket";
 import type { ActivityLog, Metric } from "@shared/schema";
+import { createApiUrl } from "@/lib/api-config";
 
 interface ApiResponse {
   status: number;
@@ -51,7 +52,7 @@ export default function ApiSection() {
     
     try {
       const startTime = Date.now();
-      const response = await fetch(`/api/${endpoint}`);
+      const response = await fetch(createApiUrl(endpoint));
       const data = await response.json();
       const responseTime = Date.now() - startTime;
       

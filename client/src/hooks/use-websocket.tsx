@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { getWebSocketUrl } from '@/lib/api-config';
 
 interface WebSocketMessage {
   type: string;
@@ -12,8 +13,7 @@ export function useWebSocket() {
   const wsRef = useRef<WebSocket | null>(null);
 
   useEffect(() => {
-    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-    const wsUrl = `${protocol}//${window.location.host}/ws`;
+    const wsUrl = `${getWebSocketUrl()}/ws`;
     
     const connect = () => {
       try {

@@ -75,12 +75,45 @@ A modern, interactive terminal-themed portfolio showcasing backend engineering s
 
 4. **Start the development server**
    ```bash
-   cd client
    npm run dev
    ```
 
 5. **Open your browser**
    Navigate to `http://localhost:3000`
+
+## Deployment
+
+### GitHub Pages Deployment
+
+This project is configured for easy deployment to GitHub Pages with a separate backend API.
+
+#### Quick Deploy
+
+1. **Run the deployment script**:
+   ```bash
+   ./scripts/deploy.sh
+   ```
+
+2. **Follow the interactive prompts** to:
+   - Build the frontend
+   - Deploy to GitHub Pages
+   - Set up backend deployment
+
+#### Manual Deployment
+
+1. **Enable GitHub Pages** in your repository settings
+2. **Set up GitHub Secrets**:
+   - `VITE_API_URL`: Your backend API URL
+3. **Push to main branch** to trigger automatic deployment
+
+#### Backend Deployment
+
+Deploy the backend to any of these platforms:
+- **Render** (Recommended): Easy setup with PostgreSQL
+- **Railway**: Good free tier with database
+- **Vercel**: Fast deployment with serverless functions
+
+For detailed deployment instructions, see [DEPLOYMENT.md](DEPLOYMENT.md).
 
 ## Project Structure
 
