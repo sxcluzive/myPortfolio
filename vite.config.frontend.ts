@@ -18,6 +18,12 @@ export default defineConfig({
   },
   define: {
     // Replace API URL for production
-    'process.env.VITE_API_URL': JSON.stringify(process.env.VITE_API_URL || 'https://your-backend-api.com'),
+    'process.env.VITE_API_URL': JSON.stringify(process.env.VITE_API_URL || 'https://your-backend.onrender.com'),
+  },
+  server: {
+    fs: {
+      strict: true,
+      deny: ["**/.*"],
+    },
   },
 }); 

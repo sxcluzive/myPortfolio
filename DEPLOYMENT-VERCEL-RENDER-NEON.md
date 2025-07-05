@@ -48,7 +48,7 @@ This guide covers deploying your portfolio using the optimal free stack:
      ```
      Name: portfolio-backend
      Root Directory: server
-     Build Command: npm run build:backend
+     Build Command: npm run build
      Start Command: npm start
      ```
 
@@ -85,7 +85,7 @@ This guide covers deploying your portfolio using the optimal free stack:
 
 3. **Set Environment Variables**
    ```
-   VITE_API_URL=https://your-app.onrender.com
+   VITE_API_URL=https://your-backend.onrender.com
    ```
 
 4. **Deploy**
@@ -93,41 +93,32 @@ This guide covers deploying your portfolio using the optimal free stack:
    - Wait for deployment (1-2 minutes)
    - Get your URL: `https://your-project.vercel.app`
 
-## 🔧 Detailed Setup Instructions
+## 🔧 Required Configuration
 
-### Database Schema Setup
-
-Your schema is already PostgreSQL-ready. Neon will automatically create tables:
-
-```bash
-# The schema is in shared/schema.ts
-# Tables will be created automatically on first deployment
-```
-
-### Backend Configuration
-
-Update `server/package.json` for Render:
-
+### Backend (server/package.json)
+The backend package.json is already configured correctly with:
 ```json
 {
   "scripts": {
-    "start": "node index.js",
-    "build:backend": "esbuild index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist"
+    "start": "node dist/index.js",
+    "build": "esbuild index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist"
   }
 }
 ```
 
-### Frontend Configuration
+### Frontend (vite.config.frontend.ts)
+The frontend Vite config is already set up for production deployment.
 
-Update `vite.config.frontend.ts` for Vercel:
-
+### CORS Configuration
+Update `server/routes.ts` to allow your Vercel domain:
 ```typescript
-export default defineConfig({
-  // ... existing config
-  define: {
-    'process.env.VITE_API_URL': JSON.stringify(process.env.VITE_API_URL || 'https://your-backend.onrender.com'),
-  },
-});
+app.use(cors({
+  origin: [
+    'https://your-project.vercel.app',
+    'http://localhost:3000'
+  ],
+  credentials: true
+}));
 ```
 
 ## 🌐 Environment Variables
@@ -144,23 +135,7 @@ DATABASE_URL=postgresql://user:pass@ep-xxx-xxx-xxx.region.aws.neon.tech/database
 VITE_API_URL=https://your-backend.onrender.com
 ```
 
-## 🔗 CORS Configuration
-
-Update `server/routes.ts` to allow Vercel domain:
-
-```typescript
-import cors from 'cors';
-
-app.use(cors({
-  origin: [
-    'https://your-project.vercel.app',
-    'http://localhost:3000'
-  ],
-  credentials: true
-}));
-```
-
-## 📊 Performance Optimization
+## 📊 Performance Benefits
 
 ### Database (Neon)
 - ✅ **Serverless**: No cold starts
@@ -201,28 +176,32 @@ ws.onopen = () => console.log('WebSocket connected!');
 
 ### Common Issues
 
-1. **Database Connection Failed**
+1. **Build Failures**
+   ```bash
+   # Check build logs in Render/Vercel
+   # Ensure all dependencies are installed
+   # Verify build script names match exactly
+   ```
+
+2. **Database Connection Failed**
    ```bash
    # Check DATABASE_URL in Render
    # Ensure Neon database is active
+   # Verify connection string format
    ```
 
-2. **CORS Errors**
+3. **CORS Errors**
    ```bash
    # Update CORS origin in server/routes.ts
    # Add your Vercel domain
+   # Check browser console for errors
    ```
 
-3. **WebSocket Not Working**
+4. **WebSocket Not Working**
    ```bash
    # Render supports WebSockets by default
    # Check if backend is deployed correctly
-   ```
-
-4. **Build Failures**
-   ```bash
-   # Check build logs in Vercel/Render
-   # Ensure all dependencies are installed
+   # Verify WebSocket URL in frontend
    ```
 
 ### Debug Commands

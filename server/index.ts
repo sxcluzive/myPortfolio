@@ -61,7 +61,7 @@ app.use((req, res, next) => {
   // Serve the app on port 3000 (changed from 5000 due to AirTunes conflict)
   // this serves both the API and the client.
   const port = process.env.PORT || 3000;
-  server.listen(port, '127.0.0.1', () => {
+  server.listen(port, () => {
     log(`serving on port ${port}`);
   });
 })();

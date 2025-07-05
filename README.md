@@ -98,15 +98,13 @@ This project is optimized for the best free deployment stack:
    ./scripts/deploy.sh
    ```
 
-2. **Choose option 1** for the complete Vercel + Render + Neon stack
+2. **Follow the step-by-step guide** to deploy all components
 
-3. **Follow the step-by-step guide** to deploy all components
+#### Manual Deployment
 
-#### Alternative Options
-
-- **GitHub Pages + Render**: Traditional static hosting
-- **Railway**: All-in-one platform
-- **Vercel**: Frontend-only deployment
+For detailed step-by-step instructions, see:
+- [DEPLOYMENT-QUICK-REFERENCE.md](DEPLOYMENT-QUICK-REFERENCE.md) - Quick reference card
+- [DEPLOYMENT-VERCEL-RENDER-NEON.md](DEPLOYMENT-VERCEL-RENDER-NEON.md) - Detailed guide
 
 #### Why This Stack?
 
@@ -116,7 +114,31 @@ This project is optimized for the best free deployment stack:
 | **Backend** | Render | ✅ 750h/month | ⭐⭐⭐⭐⭐ | WebSocket support, No cold starts |
 | **Database** | Neon | ✅ 3GB storage | ⭐⭐⭐⭐⭐ | Serverless, Auto-scaling |
 
-For detailed deployment instructions, see [DEPLOYMENT-VERCEL-RENDER-NEON.md](DEPLOYMENT-VERCEL-RENDER-NEON.md).
+#### Build Scripts (Pre-configured)
+
+The project includes all necessary build scripts:
+
+```bash
+# Backend build (for Render)
+cd server && npm run build
+
+# Frontend build (for Vercel)
+npm run build:frontend
+```
+
+#### Environment Variables
+
+**Render (Backend)**:
+```env
+NODE_ENV=production
+PORT=10000
+DATABASE_URL=postgresql://user:pass@ep-xxx-xxx-xxx.region.aws.neon.tech/database
+```
+
+**Vercel (Frontend)**:
+```env
+VITE_API_URL=https://your-backend.onrender.com
+```
 
 ## Project Structure
 
