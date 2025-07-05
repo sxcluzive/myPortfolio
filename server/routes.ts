@@ -50,8 +50,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
-  // Apply visitor tracking to all routes
-  app.use(trackVisitor);
+  // Apply visitor tracking only to page routes, not API routes
+  app.use((req, res, next) => {
+    // Only track visitors for page requests, not API calls
+    if (!req.path.startsWith('/api/')) {
+      trackVisitor(req, res, next);
+    } else {
+      next();
+    }
+  });
 
   // Server-Sent Events endpoint for real-time activity logs
   app.get("/api/events", (req, res) => {
