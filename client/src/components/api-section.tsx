@@ -1,8 +1,12 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useWebSocket } from "@/hooks/use-websocket";
+import { useSSE } from "@/hooks/use-sse";
 import type { ActivityLog, Metric } from "@shared/schema";
 import { createApiUrl } from "@/lib/api-config";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Terminal } from "lucide-react";
 
 interface ApiResponse {
   status: number;
@@ -29,7 +33,7 @@ export default function ApiSection() {
   const [showHistory, setShowHistory] = useState(false);
   const [autoRefresh, setAutoRefresh] = useState(false);
   
-  const { messages } = useWebSocket();
+  const { messages } = useSSE();
 
   const { data: logsResponse } = useQuery<{ status: number; data: ActivityLog[] }>({
     queryKey: ["/api/logs"],

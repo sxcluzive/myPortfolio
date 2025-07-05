@@ -1,6 +1,5 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
-import { WebSocketServer, WebSocket } from "ws";
 import { storage } from "./storage";
 import { v4 as uuidv4 } from 'uuid';
 
@@ -53,6 +52,65 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Apply visitor tracking to all routes
   app.use(trackVisitor);
+
+  // Server-Sent Events endpoint for real-time activity logs
+  app.get("/api/events", (req, res) => {
+    // Set SSE headers
+    res.writeHead(200, {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache',
+      'Connection': 'keep-alive',
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Headers': 'Cache-Control'
+    });
+
+    // Send initial connection message
+    res.write(`data: ${JSON.stringify({
+      type: 'connection',
+      message: 'Connected to portfolio activity stream',
+      timestamp: new Date().toISOString()
+    })}\n\n`);
+
+    // Send periodic system updates
+    const systemUpdateInterval = setInterval(() => {
+      const activities = [
+        'Database connection pool: 8/10 connections active',
+        'Cache hit ratio: 94.2%',
+        'Background job processed: email_notification',
+        'API rate limit check: 45/100 requests',
+        'Health check: All services operational',
+        'Memory usage: 2.1GB / 4GB',
+        'CPU utilization: 32%',
+        'Active sessions: 12'
+      ];
+      
+      const activity = activities[Math.floor(Math.random() * activities.length)];
+      
+      // Store system activity in logs
+      storage.createActivityLog({
+        activity,
+        type: 'system'
+      });
+
+      // Send SSE event
+      res.write(`data: ${JSON.stringify({
+        type: 'system_activity',
+        message: activity,
+        timestamp: new Date().toISOString()
+      })}\n\n`);
+    }, 3000);
+
+    // Handle client disconnect
+    req.on('close', () => {
+      console.log('SSE client disconnected');
+      clearInterval(systemUpdateInterval);
+    });
+
+    req.on('error', (error) => {
+      console.error('SSE error:', error);
+      clearInterval(systemUpdateInterval);
+    });
+  });
 
   // Visitor tracking endpoints
   app.get("/api/visitors/active", async (req, res) => {
@@ -227,80 +285,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   const httpServer = createServer(app);
-
-  // WebSocket server for real-time features
-  const wss = new WebSocketServer({ server: httpServer, path: '/ws' });
-
-  wss.on('connection', (ws: WebSocket) => {
-    console.log('WebSocket client connected');
-
-    // Send welcome message
-    if (ws.readyState === WebSocket.OPEN) {
-      ws.send(JSON.stringify({
-        type: 'system',
-        message: 'Connected to portfolio terminal',
-        timestamp: new Date().toISOString()
-      }));
-    }
-
-    // Send periodic system updates
-    const systemUpdateInterval = setInterval(() => {
-      if (ws.readyState === WebSocket.OPEN) {
-        const activities = [
-          'Database connection pool: 8/10 connections active',
-          'Cache hit ratio: 94.2%',
-          'Background job processed: email_notification',
-          'API rate limit check: 45/100 requests',
-          'Health check: All services operational',
-          'Memory usage: 2.1GB / 4GB',
-          'CPU utilization: 32%',
-          'Active sessions: 12'
-        ];
-        
-        const activity = activities[Math.floor(Math.random() * activities.length)];
-        
-        // Store system activity in logs
-        storage.createActivityLog({
-          activity,
-          type: 'system'
-        });
-
-        ws.send(JSON.stringify({
-          type: 'system_activity',
-          message: activity,
-          timestamp: new Date().toISOString()
-        }));
-      }
-    }, 3000);
-
-    ws.on('message', (message: string) => {
-      try {
-        const data = JSON.parse(message);
-        console.log('Received:', data);
-        
-        // Echo back for now
-        if (ws.readyState === WebSocket.OPEN) {
-          ws.send(JSON.stringify({
-            type: 'echo',
-            message: `Received: ${data.message}`,
-            timestamp: new Date().toISOString()
-          }));
-        }
-      } catch (error) {
-        console.error('WebSocket message error:', error);
-      }
-    });
-
-    ws.on('close', () => {
-      console.log('WebSocket client disconnected');
-      clearInterval(systemUpdateInterval);
-    });
-
-    ws.on('error', (error) => {
-      console.error('WebSocket error:', error);
-      clearInterval(systemUpdateInterval);
-    });
-  });
 
   return httpServer;
 }
