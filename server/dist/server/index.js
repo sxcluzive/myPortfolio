@@ -1,7 +1,7 @@
 import express from "express";
 import cookieParser from "cookie-parser";
 import { registerRoutes } from './routes.js';
-import { setupVite, serveStatic, log } from './vite.js';
+import { setupVite, log } from './vite.js';
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -45,7 +45,9 @@ app.use((req, res, next) => {
         await setupVite(app, server);
     }
     else {
-        serveStatic(app);
+        // In production, we don't serve static files since frontend is deployed separately on Vercel
+        // serveStatic(app);
+        log("Production mode: Frontend served separately on Vercel, only API endpoints available");
     }
     // Serve the app on port 3000 (changed from 5000 due to AirTunes conflict)
     // this serves both the API and the client.

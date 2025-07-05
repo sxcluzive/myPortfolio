@@ -35,6 +35,15 @@ function trackVisitor(req, res, next) {
     next();
 }
 export async function registerRoutes(app) {
+    // Health check endpoint
+    app.get("/api/health", (req, res) => {
+        res.json({
+            status: 200,
+            message: "Portfolio API is running",
+            timestamp: new Date().toISOString(),
+            environment: process.env.NODE_ENV || 'development'
+        });
+    });
     // Apply visitor tracking to all routes
     app.use(trackVisitor);
     // Visitor tracking endpoints
