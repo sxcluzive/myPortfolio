@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useSSE } from '@/hooks/use-sse';
 
 interface ActivityLog {
   id: number;
@@ -14,6 +15,7 @@ interface ActivityLog {
 
 export default function LiveActivityLog() {
   const [logs, setLogs] = useState<ActivityLog[]>([]);
+  const { messages } = useSSE();
 
   // Fetch activity logs
   const { data: logsResponse } = useQuery<{ status: number; data: ActivityLog[] }>({
@@ -28,35 +30,20 @@ export default function LiveActivityLog() {
     }
   }, [logsResponse]);
 
-  // WebSocket connection for real-time updates
+  // Process SSE messages for real-time updates
   useEffect(() => {
-    const ws = new WebSocket(`ws://${window.location.host}/ws`);
-    
-    ws.onmessage = (event) => {
-      try {
-        const data = JSON.parse(event.data);
-        if (data.type === 'system_activity') {
-          // Add new system activity to logs and keep only last 3
-          setLogs(prev => [{
-            id: Date.now(),
-            timestamp: data.timestamp,
-            activity: data.message,
-            type: 'system'
-          }, ...prev.slice(0, 2)]); // Keep only last 3 logs
-        }
-      } catch (error) {
-        console.error('WebSocket message error:', error);
+    messages.forEach((message) => {
+      if (message.type === 'system_activity') {
+        // Add new system activity to logs and keep only last 3
+        setLogs(prev => [{
+          id: Date.now(),
+          timestamp: message.timestamp,
+          activity: message.message,
+          type: 'system'
+        }, ...prev.slice(0, 2)]); // Keep only last 3 logs
       }
-    };
-
-    ws.onerror = (error) => {
-      console.error('WebSocket error:', error);
-    };
-
-    return () => {
-      ws.close();
-    };
-  }, []);
+    });
+  }, [messages]);
 
   const getActivityIcon = (type: string) => {
     switch (type) {
