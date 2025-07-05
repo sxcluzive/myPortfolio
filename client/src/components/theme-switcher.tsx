@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-type Theme = "matrix" | "macos" | "ubuntu";
+type Theme = "matrix" | "macos" | "ubuntu" | "light";
 
 const themes = [
   {
@@ -20,16 +20,23 @@ const themes = [
     name: "Ubuntu Terminal",
     description: "Dark purple with Ubuntu green",
     icon: "🐧"
+  },
+  {
+    id: "light" as Theme,
+    name: "Light Terminal",
+    description: "Light theme for better visibility",
+    icon: "☀️"
   }
 ];
 
-interface ThemeSwitcherProps {
-  currentTheme: Theme;
-  onThemeChange: (theme: Theme) => void;
-}
-
-export default function ThemeSwitcher({ currentTheme, onThemeChange }: ThemeSwitcherProps) {
-  const [isOpen, setIsOpen] = useState(false);
+export default function ThemeSwitcher() {
+  const [currentTheme, setCurrentTheme] = useState<Theme>(() => {
+    // Check if user prefers light mode
+    if (typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: light)').matches) {
+      return "light";
+    }
+    return "matrix";
+  });
 
   const applyTheme = (theme: Theme) => {
     const root = document.documentElement;
@@ -124,49 +131,77 @@ export default function ThemeSwitcher({ currentTheme, onThemeChange }: ThemeSwit
         root.style.setProperty("--amber-glow", "#c4a000");
         root.style.setProperty("--red-glow", "#cc0000");
         break;
+        
+      case "light":
+        root.style.setProperty("--background", "#f8f9fa");
+        root.style.setProperty("--foreground", "#2c3e50");
+        root.style.setProperty("--muted", "#e9ecef");
+        root.style.setProperty("--muted-foreground", "#6c757d");
+        root.style.setProperty("--popover", "#ffffff");
+        root.style.setProperty("--popover-foreground", "#2c3e50");
+        root.style.setProperty("--card", "#ffffff");
+        root.style.setProperty("--card-foreground", "#2c3e50");
+        root.style.setProperty("--border", "#dee2e6");
+        root.style.setProperty("--input", "#dee2e6");
+        root.style.setProperty("--primary", "#28a745");
+        root.style.setProperty("--primary-foreground", "#ffffff");
+        root.style.setProperty("--secondary", "#e9ecef");
+        root.style.setProperty("--secondary-foreground", "#2c3e50");
+        root.style.setProperty("--accent", "#e9ecef");
+        root.style.setProperty("--accent-foreground", "#2c3e50");
+        root.style.setProperty("--destructive", "#dc3545");
+        root.style.setProperty("--destructive-foreground", "#ffffff");
+        root.style.setProperty("--ring", "#28a745");
+        root.style.setProperty("--matrix", "#28a745");
+        root.style.setProperty("--matrix-dark", "#1e7e34");
+        root.style.setProperty("--terminal-bg", "#f8f9fa");
+        root.style.setProperty("--terminal-gray", "#e9ecef");
+        root.style.setProperty("--terminal-border", "#dee2e6");
+        root.style.setProperty("--cyan-glow", "#17a2b8");
+        root.style.setProperty("--amber-glow", "#ffc107");
+        root.style.setProperty("--red-glow", "#dc3545");
+        break;
     }
     
-    onThemeChange(theme);
-    setIsOpen(false);
+    setCurrentTheme(theme);
+  };
+
+  // Apply theme on mount and listen for system theme changes
+  useEffect(() => {
+    applyTheme(currentTheme);
+    
+    // Listen for system theme changes
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: light)');
+    const handleChange = (e: MediaQueryListEvent) => {
+      if (currentTheme === "light" || currentTheme === "matrix") {
+        applyTheme(e.matches ? "light" : "matrix");
+      }
+    };
+    
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, [currentTheme]);
+
+  const handleThemeClick = () => {
+    const currentIndex = themes.findIndex(t => t.id === currentTheme);
+    const nextIndex = (currentIndex + 1) % themes.length;
+    const nextTheme = themes[nextIndex].id;
+    applyTheme(nextTheme);
   };
 
   const currentThemeData = themes.find(t => t.id === currentTheme);
+  const currentIndex = themes.findIndex(t => t.id === currentTheme);
+  const nextIndex = (currentIndex + 1) % themes.length;
+  const nextThemeData = themes[nextIndex];
 
   return (
-    <div className="relative">
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center space-x-2 px-3 py-2 text-sm border border-terminal-border rounded-md hover:bg-terminal-gray transition-colors"
-      >
-        <span>{currentThemeData?.icon}</span>
-        <span className="text-matrix">{currentThemeData?.name}</span>
-        <span className="text-muted-foreground">▼</span>
-      </button>
-
-      {isOpen && (
-        <div className="absolute top-full left-0 mt-1 w-64 bg-terminal-gray border border-terminal-border rounded-md shadow-lg z-50">
-          <div className="p-2">
-            <div className="text-xs text-muted-foreground mb-2 px-2">Choose your terminal theme:</div>
-            {themes.map((theme) => (
-              <button
-                key={theme.id}
-                onClick={() => applyTheme(theme.id)}
-                className={`w-full flex items-center space-x-3 px-3 py-2 text-sm rounded-md transition-colors ${
-                  currentTheme === theme.id
-                    ? "bg-matrix text-terminal-bg"
-                    : "hover:bg-terminal-border text-matrix"
-                }`}
-              >
-                <span className="text-lg">{theme.icon}</span>
-                <div className="text-left">
-                  <div className="font-medium">{theme.name}</div>
-                  <div className="text-xs text-muted-foreground">{theme.description}</div>
-                </div>
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
+    <button
+      onClick={handleThemeClick}
+      className="flex items-center space-x-1 px-2 py-1 text-xs border border-terminal-border rounded hover:bg-terminal-gray transition-colors w-full justify-center"
+      title={`Switch to ${nextThemeData?.name}`}
+    >
+      <span className="text-sm">{nextThemeData?.icon}</span>
+      <span className="text-matrix truncate">{nextThemeData?.name}</span>
+    </button>
   );
 } 

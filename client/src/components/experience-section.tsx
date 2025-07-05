@@ -22,7 +22,7 @@ export default function ExperienceSection() {
     <section id="experience" className="min-h-screen bg-terminal-bg p-6">
       <div className="container mx-auto max-w-6xl">
         <div className="flex items-center mb-3">
-          <span className="text-matrix mr-2">root@shubham-portfolio:~#</span>
+                      <span className="text-matrix mr-2">root@shubhxcluzive:~#</span>
           <span>tail -f /var/log/career.log</span>
         </div>
 

@@ -23,7 +23,7 @@ export default function ProjectsSection() {
     <section id="projects" className="min-h-screen bg-terminal-gray p-6">
       <div className="container mx-auto max-w-6xl">
         <div className="flex items-center mb-3">
-          <span className="text-matrix mr-2">root@shubham-portfolio:~#</span>
+                      <span className="text-matrix mr-2">root@shubhxcluzive:~#</span>
           <span>ls -la ~/projects/</span>
         </div>
 
@@ -57,10 +57,18 @@ export default function ProjectsSection() {
                 <div className="text-amber-glow mb-2">Technologies:</div>
                 <div className="flex flex-wrap gap-2">
                   {project.technologies.map((tech, index) => {
-                    const colors = ['bg-matrix text-black', 'bg-cyan-glow text-black', 'bg-amber-glow text-black', 'bg-red-glow text-black', 'bg-yellow-400 text-black'];
+                    const colors = [
+                      'bg-matrix text-black', 
+                      'bg-cyan-glow text-black', 
+                      'bg-amber-glow text-black', 
+                      'bg-red-glow text-black', 
+                      'bg-green-400 text-black',
+                      'bg-purple-400 text-black',
+                      'bg-blue-400 text-black'
+                    ];
                     const colorClass = colors[index % colors.length];
                     return (
-                      <span key={index} className={`px-2 py-1 rounded ${colorClass}`}>
+                      <span key={index} className={`px-2 py-1 rounded text-xs font-medium ${colorClass}`}>
                         {tech}
                       </span>
                     );

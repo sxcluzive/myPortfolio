@@ -8,6 +8,7 @@ interface AnimatedCounterProps {
   suffix?: string;
   prefix?: string;
   decimals?: number;
+  startValue?: number;
 }
 
 export default function AnimatedCounter({ 
@@ -17,14 +18,14 @@ export default function AnimatedCounter({
   className = "", 
   suffix = "", 
   prefix = "",
-  decimals = 0 
+  decimals = 0,
+  startValue = 0
 }: AnimatedCounterProps) {
-  const [displayValue, setDisplayValue] = useState(0);
+  const [displayValue, setDisplayValue] = useState(startValue);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       const startTime = Date.now();
-      const startValue = 0;
       const endValue = value;
 
       const animate = () => {
@@ -49,7 +50,7 @@ export default function AnimatedCounter({
     }, delay);
 
     return () => clearTimeout(timer);
-  }, [value, duration, delay]);
+  }, [value, duration, delay, startValue]);
 
   const formattedValue = displayValue.toFixed(decimals);
 

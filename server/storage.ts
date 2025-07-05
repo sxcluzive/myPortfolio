@@ -1,7 +1,7 @@
 import { 
-  profiles, skills, experiences, projects, metrics, activityLogs,
-  type Profile, type Skill, type Experience, type Project, type Metric, type ActivityLog,
-  type InsertProfile, type InsertSkill, type InsertExperience, type InsertProject, type InsertMetric, type InsertActivityLog
+  profiles, skills, experiences, projects, metrics, activityLogs, visitors,
+  type Profile, type Skill, type Experience, type Project, type Metric, type ActivityLog, type Visitor,
+  type InsertProfile, type InsertSkill, type InsertExperience, type InsertProject, type InsertMetric, type InsertActivityLog, type InsertVisitor
 } from "@shared/schema";
 
 export interface IStorage {
@@ -28,6 +28,13 @@ export interface IStorage {
   // Activity logs
   getRecentActivityLogs(limit?: number): Promise<ActivityLog[]>;
   createActivityLog(log: InsertActivityLog): Promise<ActivityLog>;
+
+  // Visitor tracking
+  getActiveVisitors(): Promise<Visitor[]>;
+  getVisitorStats(): Promise<{ totalVisitors: number; activeVisitors: number; totalVisits: number }>;
+  trackVisitor(visitorData: InsertVisitor): Promise<Visitor>;
+  updateVisitorActivity(visitorId: string, page?: string): Promise<Visitor>;
+  endVisitorSession(visitorId: string): Promise<void>;
 }
 
 export class MemStorage implements IStorage {
@@ -37,6 +44,7 @@ export class MemStorage implements IStorage {
   private projects: Map<number, Project>;
   private metrics: Map<number, Metric>;
   private activityLogs: Map<number, ActivityLog>;
+  private visitors: Map<number, Visitor>;
   private currentId: number;
 
   constructor() {
@@ -46,6 +54,7 @@ export class MemStorage implements IStorage {
     this.projects = new Map();
     this.metrics = new Map();
     this.activityLogs = new Map();
+    this.visitors = new Map();
     this.currentId = 1;
     this.initializeData();
   }
@@ -63,7 +72,7 @@ export class MemStorage implements IStorage {
       linkedin: "linkedin.com/in/shubhxcluzive",
       leetcode: "leetcode.com/u/shubhxcluzive/",
       phone: "+91 9956023261",
-      experienceYears: 3,
+      experienceYears: 4,
       specialization: ["Backend Development", "API Design", "Cloud Services", "System Design"]
     });
 
@@ -263,11 +272,66 @@ async def list_products(db: AsyncSession = Depends(get_db)):
     const id = this.currentId++;
     const newLog: ActivityLog = { 
       ...log, 
-      id, 
-      timestamp: log.timestamp || new Date()
+      id,
+      timestamp: new Date(),
+      visitorId: log.visitorId || null,
+      ipAddress: log.ipAddress || null,
+      userAgent: log.userAgent || null,
+      page: log.page || null,
+      sessionDuration: log.sessionDuration || null
     };
     this.activityLogs.set(id, newLog);
     return newLog;
+  }
+
+  async getActiveVisitors(): Promise<Visitor[]> {
+    return Array.from(this.visitors.values()).filter(v => v.isActive === 'true');
+  }
+
+  async getVisitorStats(): Promise<{ totalVisitors: number; activeVisitors: number; totalVisits: number }> {
+    const totalVisitors = this.visitors.size;
+    const activeVisitors = Array.from(this.visitors.values()).filter(v => v.isActive === 'true').length;
+    const totalVisits = Array.from(this.activityLogs.values()).filter(l => l.type === 'visitor').length;
+    return { totalVisitors, activeVisitors, totalVisits };
+  }
+
+  async trackVisitor(visitorData: InsertVisitor): Promise<Visitor> {
+    const id = this.currentId++;
+    const newVisitor: Visitor = { 
+      ...visitorData, 
+      id,
+      isActive: 'true',
+      firstVisit: new Date(),
+      lastVisit: new Date(),
+      visitCount: 1,
+      totalSessionTime: 0,
+      pagesVisited: [],
+      country: null,
+      city: null,
+      ipAddress: visitorData.ipAddress || null,
+      userAgent: visitorData.userAgent || null
+    };
+    this.visitors.set(id, newVisitor);
+    return newVisitor;
+  }
+
+  async updateVisitorActivity(visitorId: string, page?: string): Promise<Visitor> {
+    const visitor = Array.from(this.visitors.values()).find(v => v.visitorId === visitorId);
+    if (visitor) {
+      visitor.lastVisit = new Date();
+      if (page && visitor.pagesVisited) {
+        visitor.pagesVisited.push(page);
+      }
+      return visitor;
+    }
+    throw new Error("Visitor not found");
+  }
+
+  async endVisitorSession(visitorId: string): Promise<void> {
+    const visitor = Array.from(this.visitors.values()).find(v => v.visitorId === visitorId);
+    if (visitor) {
+      visitor.isActive = 'false';
+    }
   }
 }
 

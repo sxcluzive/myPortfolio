@@ -2,8 +2,104 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { WebSocketServer, WebSocket } from "ws";
 import { storage } from "./storage";
+import { v4 as uuidv4 } from 'uuid';
+
+// Visitor tracking middleware
+function trackVisitor(req: any, res: any, next: any) {
+  const visitorId = req.cookies?.visitorId || uuidv4();
+  const ipAddress = req.ip || req.connection.remoteAddress || req.headers['x-forwarded-for'];
+  const userAgent = req.headers['user-agent'];
+  const page = req.path;
+
+  // Set visitor cookie if not exists
+  if (!req.cookies?.visitorId) {
+    res.cookie('visitorId', visitorId, { 
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+      httpOnly: true 
+    });
+  }
+
+  // Track visitor activity
+  storage.trackVisitor({
+    visitorId,
+    ipAddress,
+    userAgent,
+    pagesVisited: [page]
+  }).then(() => {
+    // Log visitor activity
+    storage.createActivityLog({
+      activity: `Visitor ${visitorId.slice(0, 8)}... visited ${page}`,
+      type: 'visitor',
+      visitorId,
+      ipAddress,
+      userAgent,
+      page
+    });
+  }).catch(console.error);
+
+  next();
+}
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Apply visitor tracking to all routes
+  app.use(trackVisitor);
+
+  // Visitor tracking endpoints
+  app.get("/api/visitors/active", async (req, res) => {
+    try {
+      const activeVisitors = await storage.getActiveVisitors();
+      res.json({ status: 200, data: activeVisitors });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch active visitors" });
+    }
+  });
+
+  app.get("/api/visitors/stats", async (req, res) => {
+    try {
+      const stats = await storage.getVisitorStats();
+      res.json({ status: 200, data: stats });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch visitor stats" });
+    }
+  });
+
+  app.post("/api/visitors/activity", async (req, res) => {
+    try {
+      const { visitorId, page } = req.body;
+      const visitor = await storage.updateVisitorActivity(visitorId, page);
+      
+      // Log page visit
+      await storage.createActivityLog({
+        activity: `Visitor ${visitorId.slice(0, 8)}... navigated to ${page}`,
+        type: 'visitor',
+        visitorId,
+        page
+      });
+
+      res.json({ status: 200, data: visitor });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to update visitor activity" });
+    }
+  });
+
+  app.post("/api/visitors/end-session", async (req, res) => {
+    try {
+      const { visitorId } = req.body;
+      await storage.endVisitorSession(visitorId);
+      
+      // Log session end
+      await storage.createActivityLog({
+        activity: `Visitor ${visitorId.slice(0, 8)}... ended session`,
+        type: 'visitor',
+        visitorId
+      });
+
+      res.json({ status: 200, message: "Session ended" });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to end visitor session" });
+    }
+  });
+
   // Profile endpoints
   app.get("/api/profile", async (req, res) => {
     try {

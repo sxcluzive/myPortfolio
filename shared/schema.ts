@@ -57,7 +57,27 @@ export const activityLogs = pgTable("activity_logs", {
   id: serial("id").primaryKey(),
   timestamp: timestamp("timestamp").defaultNow().notNull(),
   activity: text("activity").notNull(),
-  type: text("type").notNull(), // 'api', 'system', 'user'
+  type: text("type").notNull(), // 'api', 'system', 'user', 'visitor'
+  visitorId: text("visitor_id"), // Anonymous visitor identifier
+  ipAddress: text("ip_address"), // Visitor's IP address
+  userAgent: text("user_agent"), // Browser/device info
+  page: text("page"), // Page visited
+  sessionDuration: integer("session_duration"), // Session duration in seconds
+});
+
+export const visitors = pgTable("visitors", {
+  id: serial("id").primaryKey(),
+  visitorId: text("visitor_id").notNull().unique(), // Anonymous visitor identifier
+  ipAddress: text("ip_address"),
+  userAgent: text("user_agent"),
+  firstVisit: timestamp("first_visit").defaultNow().notNull(),
+  lastVisit: timestamp("last_visit").defaultNow().notNull(),
+  visitCount: integer("visit_count").default(1).notNull(),
+  totalSessionTime: integer("total_session_time").default(0).notNull(), // Total time in seconds
+  pagesVisited: text("pages_visited").array().default([]), // Array of pages visited
+  country: text("country"), // Country from IP geolocation
+  city: text("city"), // City from IP geolocation
+  isActive: text("is_active").default('true'), // Whether visitor is currently active
 });
 
 export const insertProfileSchema = createInsertSchema(profiles);
@@ -66,6 +86,7 @@ export const insertExperienceSchema = createInsertSchema(experiences);
 export const insertProjectSchema = createInsertSchema(projects);
 export const insertMetricSchema = createInsertSchema(metrics);
 export const insertActivityLogSchema = createInsertSchema(activityLogs);
+export const insertVisitorSchema = createInsertSchema(visitors);
 
 export type Profile = typeof profiles.$inferSelect;
 export type Skill = typeof skills.$inferSelect;
@@ -73,6 +94,7 @@ export type Experience = typeof experiences.$inferSelect;
 export type Project = typeof projects.$inferSelect;
 export type Metric = typeof metrics.$inferSelect;
 export type ActivityLog = typeof activityLogs.$inferSelect;
+export type Visitor = typeof visitors.$inferSelect;
 
 export type InsertProfile = z.infer<typeof insertProfileSchema>;
 export type InsertSkill = z.infer<typeof insertSkillSchema>;
@@ -80,3 +102,4 @@ export type InsertExperience = z.infer<typeof insertExperienceSchema>;
 export type InsertProject = z.infer<typeof insertProjectSchema>;
 export type InsertMetric = z.infer<typeof insertMetricSchema>;
 export type InsertActivityLog = z.infer<typeof insertActivityLogSchema>;
+export type InsertVisitor = z.infer<typeof insertVisitorSchema>;
