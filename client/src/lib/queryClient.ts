@@ -43,11 +43,6 @@ export const getQueryFn: <T>(options: {
     try {
       const res = await fetch(url, {
         credentials: "include",
-        headers: {
-          'Cache-Control': 'no-cache, no-store, must-revalidate',
-          'Pragma': 'no-cache',
-          'Expires': '0'
-        }
       });
 
       console.log('📡 API Response:', {
