@@ -71,6 +71,11 @@ app.use(cors({
 }
 ```
 
+### Render Configuration
+- **Build Command**: `npm run build` ✅
+- **Start Command**: `npm start` ✅
+- **Root Directory**: `server` ✅
+
 ## 🧪 Testing
 
 ### Test Backend
@@ -122,4 +127,4 @@ ws.onopen = () => console.log('Connected!');
 ## 📞 Support
 - **Render**: [docs.render.com](https://docs.render.com)
 - **Vercel**: [vercel.com/docs](https://vercel.com/docs)
-- **Neon**: [neon.tech/docs](https://neon.tech/docs) 
+- **Neon**: [neon.tech/docs](https://neon.tech/docs)
