@@ -2,7 +2,7 @@
 const getApiBaseUrl = () => {
   // In production, use the environment variable or fallback to a default
   if (import.meta.env.PROD) {
-    return import.meta.env.VITE_API_URL || 'https://your-backend-api.com';
+    return import.meta.env.VITE_API_URL || 'https://myportfolio-z3s6.onrender.com';
   }
   
   // In development, use relative paths (same origin)
@@ -18,7 +18,7 @@ export const createApiUrl = (endpoint: string) => {
 // WebSocket configuration
 export const getWebSocketUrl = () => {
   if (import.meta.env.PROD) {
-    const apiUrl = import.meta.env.VITE_API_URL || 'https://your-backend-api.com';
+    const apiUrl = import.meta.env.VITE_API_URL || 'https://myportfolio-z3s6.onrender.com';
     // Convert HTTPS to WSS
     return apiUrl.replace('https://', 'wss://').replace('http://', 'ws://');
   }
