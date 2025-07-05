@@ -55,7 +55,9 @@ app.use((req, res, next) => {
   if (app.get("env") === "development") {
     await setupVite(app, server);
   } else {
-    serveStatic(app);
+    // In production, we don't serve static files since frontend is deployed separately on Vercel
+    // serveStatic(app);
+    log("Production mode: Frontend served separately on Vercel, only API endpoints available");
   }
 
   // Serve the app on port 3000 (changed from 5000 due to AirTunes conflict)
