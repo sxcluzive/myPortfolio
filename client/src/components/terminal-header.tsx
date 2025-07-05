@@ -31,7 +31,7 @@ export default function TerminalHeader() {
           {/* Center - Portfolio Title */}
           <div className="flex-1 flex justify-center">
             <div className="text-matrix font-bold text-lg">
-            Designing Backends for Scale, Stability, and Sanity.
+            Designing Backends for Scale, Stability & Sanity.
             </div>
           </div>
           
