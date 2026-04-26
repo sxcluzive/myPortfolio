@@ -159,22 +159,22 @@ export default function HeroSection() {
                           <div className="text-xs space-y-3">
                             <div className="border-b border-terminal-border pb-2">
                               <div className="text-matrix font-bold mb-2">Core Technologies</div>
-                              <div className="grid grid-cols-2 gap-2">
+                                <div className="grid grid-cols-2 gap-2">
                                 <div className="flex items-center">
                                   <i className="fas fa-server text-cyan-glow mr-2"></i>
-                                  <span>Node.js/Express</span>
+                                  <span>Python/FastAPI</span>
                                 </div>
                                 <div className="flex items-center">
                                   <i className="fas fa-database text-amber-glow mr-2"></i>
-                                  <span>PostgreSQL/MongoDB</span>
+                                  <span>PostgreSQL/Redis</span>
                                 </div>
                                 <div className="flex items-center">
                                   <i className="fas fa-cloud text-blue-400 mr-2"></i>
-                                  <span>AWS/Cloud Services</span>
+                                  <span>AWS/Azure</span>
                                 </div>
                                 <div className="flex items-center">
                                   <i className="fas fa-brain text-purple-400 mr-2"></i>
-                                  <span>Machine Learning</span>
+                                  <span>LLM Integration</span>
                                 </div>
                               </div>
                             </div>
@@ -184,15 +184,15 @@ export default function HeroSection() {
                               <div className="space-y-1">
                                 <div className="flex items-center">
                                   <i className="fas fa-robot text-green-400 mr-2"></i>
-                                  <span>OpenAI API Integration</span>
+                                  <span>NL→SQL Pipelines</span>
                                 </div>
                                 <div className="flex items-center">
                                   <i className="fas fa-chart-line text-red-400 mr-2"></i>
-                                  <span>Data Analysis & Modeling</span>
+                                  <span>Semantic Caching (Embeddings)</span>
                                 </div>
                                 <div className="flex items-center">
                                   <i className="fas fa-cogs text-matrix mr-2"></i>
-                                  <span>NLP & Text Processing</span>
+                                  <span>RAG & Entity Extraction</span>
                                 </div>
                               </div>
                             </div>
